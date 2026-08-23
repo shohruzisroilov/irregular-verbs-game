@@ -51,6 +51,12 @@ export const TypingMode: React.FC<TypingModeProps> = ({ verbs, onCorrect }) => {
     }
   };
 
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    setTimeout(() => {
+      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 250);
+  };
+
   return (
     <div className="bg-dark-card border border-dark-border rounded-3xl p-4 sm:p-6 flex flex-col gap-3.5 sm:gap-5 shadow-card w-full">
       <div className="flex items-center justify-between">
@@ -85,6 +91,9 @@ export const TypingMode: React.FC<TypingModeProps> = ({ verbs, onCorrect }) => {
             value={v2Input}
             onChange={(e) => setV2Input(e.target.value)}
             onKeyDown={handleKeyDown}
+            onFocus={handleInputFocus}
+            autoCapitalize="none"
+            enterKeyHint="next"
             placeholder="e.g. spoke"
             autoComplete="off"
             spellCheck="false"
@@ -107,6 +116,9 @@ export const TypingMode: React.FC<TypingModeProps> = ({ verbs, onCorrect }) => {
             value={v3Input}
             onChange={(e) => setV3Input(e.target.value)}
             onKeyDown={handleKeyDown}
+            onFocus={handleInputFocus}
+            autoCapitalize="none"
+            enterKeyHint="done"
             placeholder="e.g. spoken"
             autoComplete="off"
             spellCheck="false"

@@ -170,16 +170,45 @@ class SoundEngine {
   }
 
   public speak(text: string) {
-    if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
+    if (typeof window === 'undefined' || !text) return;
+
+    // 1. Try Native SpeechSynthesis API
+    if ('speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find((v) => v.lang.startsWith('en'));
+        if (enVoice) {
+          utterance.voice = enVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+        return;
+      } catch {
+        // Fallback to Audio URL
+      }
+    }
+
+    // 2. In-App WebView Audio Fallback (Telegram / Instagram)
+    this.playFallbackAudio(text);
+  }
+
+  private playFallbackAudio(text: string) {
     try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.9;
-      utterance.pitch = 1.0;
-      window.speechSynthesis.speak(utterance);
+      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=tw-ob`;
+      const audio = new Audio(audioUrl);
+      audio.play().catch(() => {});
     } catch {
-      // TTS fallback
+      // Graceful catch
     }
   }
 }

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19" />
+      <stop offset="50%" stop-color="#161e31" />
+      <stop offset="100%" stop-color="#0b0f19" />
+    </linearGradient>
+    <linearGradient id="zap-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="50%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="512" height="512" rx="110" fill="url(#bg-grad)" />
+  <rect width="504" height="504" x="4" y="4" rx="106" fill="none" stroke="#6366f1" stroke-width="4" stroke-opacity="0.3" />
+
+  <!-- Outer Glow Circle -->
+  <circle cx="256" cy="220" r="140" fill="#6366f1" opacity="0.15" filter="url(#glow)" />
+
+  <!-- Lightning Bolt (Zap) Icon -->
+  <path d="M 280 64 L 144 260 L 256 260 L 232 448 L 368 252 L 256 252 Z" fill="url(#zap-grad)" filter="url(#glow)" />
+
+  <!-- App Title Text -->
+  <text x="256" y="450" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="34" fill="#ffffff" letter-spacing="2">
+    IRREGULAR VERBS
+  </text>
+</svg>
