@@ -106,7 +106,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-primary/10 via-dark-bg to-dark-bg pb-20 sm:pb-8">
+    <div className="min-h-screen bg-dark-bg bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-primary/10 via-dark-bg to-dark-bg pb-24 sm:pb-8">
       <div className="max-w-xl sm:max-w-2xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex flex-col gap-2.5 sm:gap-4">
         {/* Top Header with Dictionary page trigger & Test Score Badge */}
         <Header

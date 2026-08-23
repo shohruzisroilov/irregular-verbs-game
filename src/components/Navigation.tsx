@@ -53,22 +53,28 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }
         })}
       </nav>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-dark-bg/95 backdrop-blur-xl border-t border-dark-border px-1 py-2 z-50 flex items-center justify-around shadow-2xl">
+      {/* Mobile Bottom Navigation Bar (Optimized larger touch targets) */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-dark-card/95 backdrop-blur-2xl border-t border-dark-border/80 px-1 py-1.5 z-50 flex items-center justify-around shadow-2xl">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => handleSelect(tab.id)}
-              className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1 rounded-xl transition-all flex-1 min-w-0 ${
-                isActive ? 'text-brand-accent scale-105 font-extrabold' : 'text-dark-muted hover:text-white font-medium'
+              className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl transition-all duration-200 flex-1 min-w-0 min-h-[56px] active:scale-95 ${
+                isActive
+                  ? 'bg-gradient-to-b from-brand-primary/30 to-brand-primaryDark/30 text-white border border-brand-primary/50 shadow-glow'
+                  : 'text-dark-muted hover:text-white hover:bg-white/5 border border-transparent'
               }`}
             >
-              <div className={isActive ? 'text-brand-accent' : 'text-dark-muted'}>
-                {tab.icon}
+              <div className={isActive ? 'text-brand-accent scale-110' : 'text-dark-muted opacity-80'}>
+                {React.cloneElement(tab.icon as React.ReactElement, { className: 'w-5 h-5 shrink-0' })}
               </div>
-              <span className="text-[9px] truncate max-w-full">{tab.label}</span>
+              <span className={`text-[10px] leading-none tracking-tight truncate max-w-full ${
+                isActive ? 'font-extrabold text-white' : 'font-semibold text-dark-muted'
+              }`}>
+                {tab.label}
+              </span>
             </button>
           );
         })}
