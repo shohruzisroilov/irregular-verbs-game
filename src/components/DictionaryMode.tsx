@@ -61,7 +61,7 @@ export const DictionaryMode: React.FC<DictionaryModeProps> = ({ verbs, starred, 
       </div>
 
       {/* Verbs List */}
-      <div className="flex flex-col gap-2.5 max-h-[62vh] overflow-y-auto pr-1">
+      <div className="flex flex-col gap-2.5 pb-4">
         {filteredVerbs.length === 0 ? (
           <div className="text-center text-dark-muted py-10 text-xs font-medium">
             No verbs found 🔍

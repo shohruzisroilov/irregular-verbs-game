@@ -53,8 +53,8 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }
         })}
       </nav>
 
-      {/* Mobile Bottom Navigation Bar (Optimized larger touch targets) */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-dark-card/95 backdrop-blur-2xl border-t border-dark-border/80 px-1 py-1.5 z-50 flex items-center justify-around shadow-2xl">
+      {/* Mobile Bottom Navigation Bar (Optimized larger touch targets with Safe Area Inset) */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-dark-card/95 backdrop-blur-2xl border-t border-dark-border/80 px-1 pt-1.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-50 flex items-center justify-around shadow-2xl">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
