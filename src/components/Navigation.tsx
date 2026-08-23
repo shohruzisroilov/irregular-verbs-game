@@ -27,8 +27,8 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }
 
   return (
     <>
-      {/* Top Navigation Step Tabs */}
-      <nav className="flex bg-dark-card/90 backdrop-blur-md border border-dark-border p-1.5 rounded-2xl gap-1 overflow-x-auto no-scrollbar w-full">
+      {/* Top Navigation Step Tabs (Desktop & Tablet only) */}
+      <nav className="hidden sm:flex bg-dark-card/90 backdrop-blur-md border border-dark-border p-1.5 rounded-2xl gap-1 overflow-x-auto no-scrollbar w-full">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -54,7 +54,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }
       </nav>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-dark-bg/95 backdrop-blur-xl border-t border-dark-border px-1 py-2 z-50 flex items-center justify-around">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-dark-bg/95 backdrop-blur-xl border-t border-dark-border px-1 py-2 z-50 flex items-center justify-around shadow-2xl">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -68,7 +68,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }
               <div className={isActive ? 'text-brand-accent' : 'text-dark-muted'}>
                 {tab.icon}
               </div>
-              <span className="text-[9px] sm:text-[10px] truncate max-w-full">{tab.label}</span>
+              <span className="text-[9px] truncate max-w-full">{tab.label}</span>
             </button>
           );
         })}

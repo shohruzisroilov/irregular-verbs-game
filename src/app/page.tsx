@@ -106,8 +106,8 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-primary/10 via-dark-bg to-dark-bg pb-24 sm:pb-8">
-      <div className="max-w-xl sm:max-w-2xl mx-auto px-4 py-4 flex flex-col gap-4">
+    <div className="min-h-screen bg-dark-bg bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-primary/10 via-dark-bg to-dark-bg pb-20 sm:pb-8">
+      <div className="max-w-xl sm:max-w-2xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex flex-col gap-2.5 sm:gap-4">
         {/* Top Header with Dictionary page trigger & Test Score Badge */}
         <Header
           onOpenDictionary={() => setActiveTab('dictionary')}
@@ -122,7 +122,7 @@ export default function Home() {
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Active Screen View */}
-        <main className="w-full mt-1">
+        <main className="w-full mt-0.5 sm:mt-1">
           {activeTab === 'flashcards' && (
             <FlashcardMode
               verbs={VERBS_DATA}
@@ -170,7 +170,7 @@ export default function Home() {
         </main>
 
         {/* Developed by Footer */}
-        <footer className="mt-6 text-center text-xs font-semibold text-dark-muted flex items-center justify-center gap-1.5 pb-16 sm:pb-4 opacity-80 hover:opacity-100 transition-opacity">
+        <footer className="mt-3 sm:mt-6 text-center text-xs font-semibold text-dark-muted flex items-center justify-center gap-1.5 pb-16 sm:pb-4 opacity-80 hover:opacity-100 transition-opacity">
           <span>Developed by</span>
           <a
             href="https://www.shohruzisroilov.uz/"

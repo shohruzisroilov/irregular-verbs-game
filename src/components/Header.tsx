@@ -24,16 +24,16 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="flex items-center justify-between bg-dark-card/90 backdrop-blur-md border border-dark-border px-4 py-3 rounded-2xl shadow-card gap-2">
-      <div className="flex items-center gap-2.5">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-primary to-brand-accent flex items-center justify-center shadow-glow shrink-0">
-          <Zap className="w-5 h-5 text-white" />
+    <header className="flex items-center justify-between bg-dark-card/90 backdrop-blur-md border border-dark-border px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl shadow-card gap-2">
+      <div className="flex items-center gap-2 sm:gap-2.5">
+        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-brand-primary to-brand-accent flex items-center justify-center shadow-glow shrink-0">
+          <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
         </div>
         <div>
-          <h1 className="font-heading font-extrabold text-base text-white tracking-tight leading-none">
+          <h1 className="font-heading font-extrabold text-sm sm:text-base text-white tracking-tight leading-none">
             Irregular Verbs
           </h1>
-          <p className="text-[11px] text-dark-muted font-medium mt-0.5">
+          <p className="text-[10px] sm:text-[11px] text-dark-muted font-medium mt-0.5">
             5-Step Learning App
           </p>
         </div>

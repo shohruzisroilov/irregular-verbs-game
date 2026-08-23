@@ -113,7 +113,7 @@ export const MatchingMode: React.FC<MatchingModeProps> = ({ verbs, onComplete })
             <button
               key={card.id}
               onClick={() => handleCardClick(card)}
-              className={`min-h-[85px] p-3 rounded-2xl border font-sans font-extrabold text-sm whitespace-pre-line flex items-center justify-center text-center transition-all duration-200 active:scale-95 ${style}`}
+              className={`min-h-[70px] sm:min-h-[85px] p-2.5 sm:p-3 rounded-2xl border font-sans font-extrabold text-xs sm:text-sm whitespace-pre-line flex items-center justify-center text-center transition-all duration-200 active:scale-95 ${style}`}
             >
               {card.text}
             </button>
