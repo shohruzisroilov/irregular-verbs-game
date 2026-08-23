@@ -73,10 +73,10 @@ export const TypingMode: React.FC<TypingModeProps> = ({ verbs, onCorrect }) => {
       </div>
 
       <div className="text-center py-1 sm:py-2">
-        <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-white tracking-tight">
+        <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight">
           {currentVerb.v1}
         </h2>
-        <p className="text-xs sm:text-sm text-brand-amber font-semibold mt-0.5 sm:mt-1">
+        <p className="text-base sm:text-lg text-brand-amber font-extrabold mt-1">
           {currentVerb.uz}
         </p>
       </div>

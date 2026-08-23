@@ -147,10 +147,10 @@ export const SpeedMode: React.FC<SpeedModeProps> = ({ verbs, onComplete }) => {
         question && (
           <div className="bg-dark-card border border-dark-border rounded-3xl p-6 flex flex-col gap-6 shadow-card">
             <div className="text-center py-4">
-              <h2 className="font-heading font-extrabold text-4xl text-white tracking-tight">
+              <h2 className="font-heading font-black text-5xl text-white tracking-tight">
                 {question.targetWord}
               </h2>
-              <p className="text-xs text-dark-muted font-medium mt-1">
+              <p className="text-sm font-extrabold text-brand-amber mt-1.5">
                 {question.subtext}
               </p>
             </div>
@@ -160,7 +160,7 @@ export const SpeedMode: React.FC<SpeedModeProps> = ({ verbs, onComplete }) => {
                 <button
                   key={idx}
                   onClick={() => handleSelectOption(opt)}
-                  className="p-4 rounded-2xl bg-white/5 border border-dark-border hover:bg-white/10 hover:border-white/20 text-white font-sans text-base font-bold transition-all active:scale-95 text-center"
+                  className="p-4 rounded-2xl bg-white/5 border border-dark-border hover:bg-white/10 hover:border-white/20 text-white font-sans text-lg sm:text-xl font-black transition-all active:scale-95 text-center"
                 >
                   {opt}
                 </button>

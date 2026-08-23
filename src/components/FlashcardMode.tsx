@@ -104,9 +104,12 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
             </div>
 
             <div className="my-auto flex flex-col items-center gap-1.5 sm:gap-2">
-              <h2 className="font-heading font-extrabold text-4xl xs:text-5xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-brand-primary tracking-tight">
+              <h2 className="font-heading font-black text-5xl xs:text-6xl sm:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-brand-primary tracking-tight">
                 {currentVerb.v1}
               </h2>
+              <div className="text-base xs:text-lg sm:text-xl font-extrabold text-brand-amber tracking-wide">
+                {currentVerb.uz}
+              </div>
               {progressCount === 5 && (
                 <span className="text-[10px] sm:text-[11px] font-extrabold text-brand-emerald bg-brand-emerald/15 border border-brand-emerald/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                   ✓ Fully Mastered
@@ -159,19 +162,19 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
 
             <div className="w-full flex flex-col gap-1.5 sm:gap-2 my-auto">
               <div className="flex items-center justify-between bg-white/5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-white/5">
-                <span className="text-[11px] sm:text-xs font-bold text-brand-accent">V1 (Infinitive):</span>
-                <span className="font-heading font-bold text-sm sm:text-base text-white">{currentVerb.v1}</span>
+                <span className="text-xs sm:text-sm font-extrabold text-brand-accent">V1 (Infinitive):</span>
+                <span className="font-heading font-black text-base sm:text-xl text-white">{currentVerb.v1}</span>
               </div>
               <div className="flex items-center justify-between bg-white/5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-white/5">
-                <span className="text-[11px] sm:text-xs font-bold text-brand-accent">V2 (Past Simple):</span>
-                <span className="font-heading font-bold text-sm sm:text-base text-white">{currentVerb.v2}</span>
+                <span className="text-xs sm:text-sm font-extrabold text-brand-accent">V2 (Past Simple):</span>
+                <span className="font-heading font-black text-base sm:text-xl text-white">{currentVerb.v2}</span>
               </div>
               <div className="flex items-center justify-between bg-white/5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-white/5">
-                <span className="text-[11px] sm:text-xs font-bold text-brand-accent">V3 (Past Participle):</span>
-                <span className="font-heading font-bold text-sm sm:text-base text-white">{currentVerb.v3}</span>
+                <span className="text-xs sm:text-sm font-extrabold text-brand-accent">V3 (Past Participle):</span>
+                <span className="font-heading font-black text-base sm:text-xl text-white">{currentVerb.v3}</span>
               </div>
 
-              <div className="text-sm sm:text-base font-extrabold text-brand-amber mt-0.5">
+              <div className="text-base sm:text-lg font-black text-brand-amber mt-0.5">
                 {currentVerb.uz}
               </div>
               <p className="text-[11px] sm:text-xs text-dark-muted italic bg-black/30 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg truncate max-w-full">

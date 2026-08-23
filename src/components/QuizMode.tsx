@@ -210,13 +210,13 @@ export const QuizMode: React.FC<QuizModeProps> = ({ verbs, onCompleteTest }) => 
 
       {/* Target Word Prompt */}
       <div className="text-center py-3 flex flex-col items-center justify-center bg-black/20 border border-white/5 rounded-2xl p-4">
-        <span className="text-[11px] font-bold text-dark-muted uppercase tracking-wider mb-1">
+        <span className="text-xs font-bold text-dark-muted uppercase tracking-wider mb-1">
           {question.questionTitle}
         </span>
-        <h2 className="font-heading font-extrabold text-4xl text-white tracking-tight mb-0.5">
+        <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight mb-0.5">
           {question.targetWord}
         </h2>
-        <p className="text-xs text-dark-muted font-medium">
+        <p className="text-sm font-extrabold text-brand-amber">
           {question.subtext}
         </p>
       </div>
@@ -243,7 +243,7 @@ export const QuizMode: React.FC<QuizModeProps> = ({ verbs, onCompleteTest }) => 
               key={idx}
               disabled={isAnswered}
               onClick={() => handleSelectOption(option)}
-              className={`p-3.5 rounded-xl border font-sans text-base font-bold transition-all flex items-center justify-between active:scale-[0.98] ${btnStyle}`}
+              className={`p-3.5 rounded-xl border font-sans text-lg sm:text-xl font-black transition-all flex items-center justify-between active:scale-[0.98] ${btnStyle}`}
             >
               <span>{option}</span>
               {isAnswered && isCorrect && <Check className="w-5 h-5 text-brand-emerald" />}

@@ -74,23 +74,23 @@ export const DictionaryMode: React.FC<DictionaryModeProps> = ({ verbs, starred, 
                 key={verb.id}
                 className="bg-dark-card border border-dark-border hover:border-brand-primary/40 rounded-2xl p-4 flex items-center justify-between gap-3 transition-all"
               >
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-heading font-extrabold text-lg text-white">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-heading font-black text-2xl sm:text-3xl text-white tracking-tight">
                       {verb.v1}
                     </span>
                     <button
                       onClick={() => sound.speak(`${verb.v1}, ${verb.v2}, ${verb.v3}`)}
-                      className="w-7 h-7 rounded-lg bg-white/5 hover:bg-brand-primary hover:text-white border border-white/5 flex items-center justify-center text-dark-muted transition-all"
+                      className="w-8 h-8 rounded-xl bg-brand-primary/15 hover:bg-brand-primary hover:text-white border border-brand-primary/30 flex items-center justify-center text-brand-primary transition-all shrink-0"
                       title="Listen pronunciation"
                     >
-                      <Volume2 className="w-3.5 h-3.5" />
+                      <Volume2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <div className="text-xs font-bold text-brand-accent">
-                    V2: <span className="text-white">{verb.v2}</span> | V3: <span className="text-white">{verb.v3}</span>
+                  <div className="text-sm sm:text-base font-extrabold text-brand-accent">
+                    V2: <span className="text-white font-black">{verb.v2}</span> | V3: <span className="text-white font-black">{verb.v3}</span>
                   </div>
-                  <div className="text-xs font-medium text-dark-muted">
+                  <div className="text-sm sm:text-base font-extrabold text-brand-amber">
                     {verb.uz}
                   </div>
                 </div>
