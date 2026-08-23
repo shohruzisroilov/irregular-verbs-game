@@ -3,6 +3,36 @@
 class SoundEngine {
   private audioCtx: AudioContext | null = null;
   private soundEnabled: boolean = true;
+  private englishVoice: SpeechSynthesisVoice | null = null;
+
+  constructor() {
+    this.initVoices();
+  }
+
+  private initVoices() {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    const loadVoice = () => {
+      try {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          // Priority 1: en-US exact match, Priority 2: en-GB match, Priority 3: any English voice
+          this.englishVoice =
+            voices.find((v) => v.lang === 'en-US' || v.lang === 'en_US') ||
+            voices.find((v) => v.lang.startsWith('en-') || v.lang.startsWith('en_')) ||
+            voices.find((v) => v.lang.toLowerCase().includes('en')) ||
+            null;
+        }
+      } catch {
+        // Voice loading fallback
+      }
+    };
+
+    loadVoice();
+    if (typeof window.speechSynthesis !== 'undefined') {
+      window.speechSynthesis.onvoiceschanged = loadVoice;
+    }
+  }
 
   private init() {
     if (typeof window === 'undefined') return;
@@ -172,7 +202,7 @@ class SoundEngine {
   public speak(text: string) {
     if (typeof window === 'undefined' || !text) return;
 
-    // 1. Try Native SpeechSynthesis API
+    // 1. Try Native SpeechSynthesis API with strict en-US voice
     if ('speechSynthesis' in window) {
       try {
         window.speechSynthesis.cancel();
@@ -182,13 +212,15 @@ class SoundEngine {
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
-        utterance.rate = 0.9;
+        utterance.rate = 0.88; // Natural speaking pace
         utterance.pitch = 1.0;
 
-        const voices = window.speechSynthesis.getVoices();
-        const enVoice = voices.find((v) => v.lang.startsWith('en'));
-        if (enVoice) {
-          utterance.voice = enVoice;
+        if (this.englishVoice) {
+          utterance.voice = this.englishVoice;
+        } else {
+          const voices = window.speechSynthesis.getVoices();
+          const enVoice = voices.find((v) => v.lang === 'en-US' || v.lang === 'en_US' || v.lang.startsWith('en'));
+          if (enVoice) utterance.voice = enVoice;
         }
 
         window.speechSynthesis.speak(utterance);
@@ -198,13 +230,14 @@ class SoundEngine {
       }
     }
 
-    // 2. In-App WebView Audio Fallback (Telegram / Instagram)
+    // 2. High Quality US Native Speaker MP3 Audio Fallback (Telegram / WebViews)
     this.playFallbackAudio(text);
   }
 
   private playFallbackAudio(text: string) {
     try {
-      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=tw-ob`;
+      const cleanText = text.trim();
+      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText)}&type=2`;
       const audio = new Audio(audioUrl);
       audio.play().catch(() => {});
     } catch {
