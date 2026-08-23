@@ -106,7 +106,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-primary/10 via-dark-bg to-dark-bg pb-24 sm:pb-8">
+    <div className="min-h-screen bg-dark-bg bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-primary/10 via-dark-bg to-dark-bg pt-[max(0px,env(safe-area-inset-top))] pb-24 sm:pb-8">
       {/* Top Banner Developer Credit (Hidden on Table page) */}
       {activeTab !== 'dictionary' && (
         <div className="w-full bg-dark-card/60 backdrop-blur-md border-b border-dark-border/60 py-1.5 px-3 text-center text-[11px] sm:text-xs font-semibold text-dark-muted flex items-center justify-center gap-1.5">
