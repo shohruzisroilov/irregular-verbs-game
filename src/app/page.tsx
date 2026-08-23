@@ -107,6 +107,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-dark-bg bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-primary/10 via-dark-bg to-dark-bg pb-24 sm:pb-8">
+      {/* Top Banner Developer Credit */}
+      <div className="w-full bg-dark-card/60 backdrop-blur-md border-b border-dark-border/60 py-1.5 px-3 text-center text-[11px] sm:text-xs font-semibold text-dark-muted flex items-center justify-center gap-1.5">
+        <span>Developed by</span>
+        <a
+          href="https://www.shohruzisroilov.uz/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-brand-accent hover:underline font-extrabold transition-all"
+        >
+          Shohruz Isroilov
+        </a>
+      </div>
+
       <div className="max-w-xl sm:max-w-2xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex flex-col gap-2.5 sm:gap-4">
         {/* Top Header with Dictionary page trigger & Test Score Badge */}
         <Header
@@ -168,19 +181,6 @@ export default function Home() {
             />
           )}
         </main>
-
-        {/* Developed by Footer */}
-        <footer className="mt-3 sm:mt-6 text-center text-xs font-semibold text-dark-muted flex items-center justify-center gap-1.5 pb-16 sm:pb-4 opacity-80 hover:opacity-100 transition-opacity">
-          <span>Developed by</span>
-          <a
-            href="https://www.shohruzisroilov.uz/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-brand-accent hover:underline font-extrabold transition-all"
-          >
-            Shohruz Isroilov
-          </a>
-        </footer>
       </div>
 
       {/* Test Result Summary Modal */}

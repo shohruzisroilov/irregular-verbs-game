@@ -33,18 +33,8 @@ export const Header: React.FC<HeaderProps> = ({
           <h1 className="font-heading font-extrabold text-sm sm:text-base text-white tracking-tight leading-none">
             Irregular Verbs
           </h1>
-          <p className="text-[10px] sm:text-[11px] text-dark-muted font-medium mt-0.5 flex items-center gap-1">
-            <span>5-Step App</span>
-            <span className="text-dark-muted/60">•</span>
-            <span>by</span>
-            <a
-              href="https://www.shohruzisroilov.uz/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-brand-accent hover:underline font-bold transition-all"
-            >
-              Shohruz Isroilov
-            </a>
+          <p className="text-[10px] sm:text-[11px] text-dark-muted font-medium mt-0.5">
+            5-Step Learning App
           </p>
         </div>
       </div>
