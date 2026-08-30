@@ -1,12 +1,26 @@
 // TypeScript Web Audio API Sound Synthesizer & Speech Synthesis Utility
 
+const SOUND_PREF_KEY = 'verb_sound_enabled';
+
 class SoundEngine {
   private audioCtx: AudioContext | null = null;
   private soundEnabled: boolean = true;
   private englishVoice: SpeechSynthesisVoice | null = null;
 
   constructor() {
+    this.restorePreference();
     this.initVoices();
+  }
+
+  /** The mute button used to reset to "on" after every reload. */
+  private restorePreference() {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = window.localStorage.getItem(SOUND_PREF_KEY);
+      if (saved !== null) this.soundEnabled = saved === 'true';
+    } catch {
+      // Storage unavailable: keep the default.
+    }
   }
 
   private initVoices() {
@@ -49,6 +63,16 @@ class SoundEngine {
 
   public toggleSound(): boolean {
     this.soundEnabled = !this.soundEnabled;
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(SOUND_PREF_KEY, String(this.soundEnabled));
+      } catch {
+        // Storage unavailable: the toggle still works for this session.
+      }
+    }
+    if (!this.soundEnabled && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
     return this.soundEnabled;
   }
 
@@ -202,9 +226,23 @@ class SoundEngine {
   public speak(text: string) {
     if (typeof window === 'undefined' || !text) return;
 
-    // 1. Try Native SpeechSynthesis API with strict en-US voice
+    // 1. Native SpeechSynthesis, preferring an en-US voice.
     if ('speechSynthesis' in window) {
       try {
+        const voices = window.speechSynthesis.getVoices();
+        const voice =
+          this.englishVoice ||
+          voices.find((v) => v.lang === 'en-US' || v.lang === 'en_US') ||
+          voices.find((v) => v.lang.startsWith('en')) ||
+          null;
+
+        // Some WebViews (Telegram, older Android) expose the API but ship no
+        // voices at all, and speak() then silently does nothing.
+        if (voices.length === 0 && !voice) {
+          this.playFallbackAudio(text);
+          return;
+        }
+
         window.speechSynthesis.cancel();
         if (window.speechSynthesis.paused) {
           window.speechSynthesis.resume();
@@ -214,23 +252,31 @@ class SoundEngine {
         utterance.lang = 'en-US';
         utterance.rate = 0.88; // Natural speaking pace
         utterance.pitch = 1.0;
+        if (voice) utterance.voice = voice;
 
-        if (this.englishVoice) {
-          utterance.voice = this.englishVoice;
-        } else {
-          const voices = window.speechSynthesis.getVoices();
-          const enVoice = voices.find((v) => v.lang === 'en-US' || v.lang === 'en_US' || v.lang.startsWith('en'));
-          if (enVoice) utterance.voice = enVoice;
-        }
+        let spoke = false;
+        utterance.onstart = () => {
+          spoke = true;
+        };
+        utterance.onerror = () => {
+          if (!spoke) this.playFallbackAudio(text);
+        };
 
         window.speechSynthesis.speak(utterance);
+
+        // If nothing started speaking, fall back to the recorded audio.
+        window.setTimeout(() => {
+          if (!spoke && !window.speechSynthesis.speaking) {
+            this.playFallbackAudio(text);
+          }
+        }, 600);
         return;
       } catch {
-        // Fallback to Audio URL
+        // Fall through to the audio URL.
       }
     }
 
-    // 2. High Quality US Native Speaker MP3 Audio Fallback (Telegram / WebViews)
+    // 2. Recorded US-English audio for engines without speech synthesis.
     this.playFallbackAudio(text);
   }
 
@@ -250,6 +296,7 @@ export const sound = new SoundEngine();
 
 export function triggerConfetti() {
   if (typeof window === 'undefined') return;
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
 
   const canvas = document.createElement('canvas');
   canvas.style.position = 'fixed';
@@ -262,7 +309,11 @@ export function triggerConfetti() {
   document.body.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx) {
+    // Without a context the animation never runs, so the node would leak.
+    canvas.remove();
+    return;
+  }
 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;

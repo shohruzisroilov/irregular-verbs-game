@@ -1,125 +1,204 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Verb } from '@/types/verb';
 import { sound, triggerConfetti } from '@/utils/sound';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, CheckCircle2 } from 'lucide-react';
+import { shuffle, sample } from '@/utils/shuffle';
+import { MODE_BY_ID } from '@/constants/learning';
+import { ModeIntro } from './shared';
 
 interface MatchingModeProps {
   verbs: Verb[];
-  onComplete: (xpGain: number) => void;
+  onAnswer: (verbId: number, correct: boolean) => void;
 }
 
 interface MatchCardItem {
   id: number;
   verbId: number;
-  text: string;
-  type: 'v1' | 'details';
+  type: 'v1' | 'forms';
+  v1: string;
+  v2: string;
+  v3: string;
+  uz: string;
 }
 
-export const MatchingMode: React.FC<MatchingModeProps> = ({ verbs, onComplete }) => {
+const PAIRS_PER_ROUND = 4;
+const MISMATCH_MS = 700;
+
+export const MatchingMode: React.FC<MatchingModeProps> = ({ verbs, onAnswer }) => {
   const [cards, setCards] = useState<MatchCardItem[]>([]);
-  const [selectedCards, setSelectedCards] = useState<number[]>([]);
-  const [matchedIds, setMatchedIds] = useState<number[]>([]);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [matched, setMatched] = useState<number[]>([]);
+  const [wrongPair, setWrongPair] = useState<number[]>([]);
+  const [mistakes, setMistakes] = useState(0);
+  const [round, setRound] = useState(1);
+
+  // While a wrong pair is on screen the board is frozen. Without this, a third
+  // click pushed `selected` to length 3 and the comparison never ran again.
+  const lockedRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const initGame = useCallback(() => {
-    const shuffledVerbs = [...verbs].sort(() => 0.5 - Math.random()).slice(0, 4);
+    const chosen = sample(verbs, PAIRS_PER_ROUND);
     const gameCards: MatchCardItem[] = [];
 
-    shuffledVerbs.forEach((verb, idx) => {
-      gameCards.push({
-        id: idx * 2,
-        verbId: verb.id,
-        text: verb.v1,
-        type: 'v1'
-      });
-      gameCards.push({
-        id: idx * 2 + 1,
-        verbId: verb.id,
-        text: `${verb.v2} / ${verb.v3}\n(${verb.uz})`,
-        type: 'details'
-      });
+    chosen.forEach((verb, idx) => {
+      const base = { verbId: verb.id, v1: verb.v1, v2: verb.v2, v3: verb.v3, uz: verb.uz };
+      gameCards.push({ id: idx * 2, type: 'v1', ...base });
+      gameCards.push({ id: idx * 2 + 1, type: 'forms', ...base });
     });
 
-    gameCards.sort(() => 0.5 - Math.random());
-    setCards(gameCards);
-    setSelectedCards([]);
-    setMatchedIds([]);
+    lockedRef.current = false;
+    setCards(shuffle(gameCards));
+    setSelected([]);
+    setMatched([]);
+    setWrongPair([]);
+    setMistakes(0);
   }, [verbs]);
 
   useEffect(() => {
     initGame();
   }, [initGame]);
 
+  useEffect(() => () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+  }, []);
+
+  const totalCards = cards.length;
+
   const handleCardClick = (card: MatchCardItem) => {
-    if (selectedCards.includes(card.id) || matchedIds.includes(card.id)) return;
+    if (lockedRef.current) return;
+    if (selected.includes(card.id) || matched.includes(card.id)) return;
 
     sound.playClick();
-    const newSelected = [...selectedCards, card.id];
-    setSelectedCards(newSelected);
+    const newSelected = [...selected, card.id];
+    setSelected(newSelected);
+    if (newSelected.length < 2) return;
 
-    if (newSelected.length === 2) {
-      const firstCard = cards.find((c) => c.id === newSelected[0])!;
-      const secondCard = cards.find((c) => c.id === newSelected[1])!;
+    const first = cards.find((c) => c.id === newSelected[0]);
+    const second = cards.find((c) => c.id === newSelected[1]);
+    if (!first || !second) return;
 
-      if (firstCard.verbId === secondCard.verbId && firstCard.type !== secondCard.type) {
-        sound.playSuccess();
-        const newMatched = [...matchedIds, firstCard.id, secondCard.id];
-        setMatchedIds(newMatched);
-        setSelectedCards([]);
+    const isMatch = first.verbId === second.verbId && first.type !== second.type;
 
-        if (newMatched.length === 8) {
-          sound.playFanfare();
-          triggerConfetti();
-          onComplete(40);
-        }
-      } else {
-        sound.playError();
-        setTimeout(() => {
-          setSelectedCards([]);
-        }, 800);
+    if (isMatch) {
+      sound.playSuccess();
+      onAnswer(first.verbId, true);
+      const newMatched = [...matched, first.id, second.id];
+      setMatched(newMatched);
+      setSelected([]);
+
+      if (newMatched.length === totalCards) {
+        sound.playFanfare();
+        triggerConfetti();
       }
+    } else {
+      sound.playError();
+      onAnswer(first.verbId, false);
+      lockedRef.current = true;
+      setWrongPair(newSelected);
+      setMistakes((prev) => prev + 1);
+      timerRef.current = setTimeout(() => {
+        setSelected([]);
+        setWrongPair([]);
+        lockedRef.current = false;
+      }, MISMATCH_MS);
     }
   };
 
+  const isRoundDone = totalCards > 0 && matched.length === totalCards;
+
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex items-center justify-between px-1">
-        <span className="text-xs font-bold text-brand-accent uppercase tracking-wider">
-          Match the matching pairs
-        </span>
+    <div className="flex flex-col gap-3 w-full">
+      <ModeIntro step={2} title="Juftlash" hint={MODE_BY_ID.matching.hint}>
         <button
-          onClick={initGame}
-          className="w-9 h-9 rounded-xl bg-white/5 border border-dark-border flex items-center justify-center text-dark-text hover:bg-white/10"
-          title="Restart round"
+          onClick={() => {
+            sound.playClick();
+            initGame();
+            setRound((prev) => prev + 1);
+          }}
+          className="w-11 h-11 rounded-xl bg-white/5 border border-dark-border flex items-center justify-center text-dark-muted hover:text-white hover:bg-white/10 transition-colors shrink-0"
+          aria-label="Yangi juftlik to'plami"
+          title="Yangi to'plam"
         >
-          <RotateCcw className="w-4 h-4 text-brand-primary" />
+          <RotateCcw className="w-4 h-4" />
         </button>
+      </ModeIntro>
+
+      <div className="flex items-center justify-between text-[11px] font-semibold text-dark-muted px-0.5">
+        <span className="tabular-nums">{round}-to&apos;plam</span>
+        <span className="tabular-nums">
+          Topildi: {matched.length / 2} / {totalCards / 2} · Xato: {mistakes}
+        </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        {cards.map((card) => {
-          const isSelected = selectedCards.includes(card.id);
-          const isMatched = matchedIds.includes(card.id);
+      {isRoundDone ? (
+        <div className="bg-dark-card border border-brand-emerald/30 rounded-3xl p-8 flex flex-col items-center text-center gap-4 shadow-card animate-popIn">
+          <div className="w-14 h-14 rounded-2xl bg-brand-emerald/15 border border-brand-emerald/30 flex items-center justify-center">
+            <CheckCircle2 className="w-7 h-7 text-brand-emerald" />
+          </div>
+          <div>
+            <h3 className="font-heading font-bold text-xl text-white">Barcha juftlik topildi</h3>
+            <p className="text-xs text-dark-muted mt-1.5">
+              {mistakes === 0
+                ? 'Bitta ham xatosiz.'
+                : `${mistakes} ta xato bilan yakunladingiz.`}
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              sound.playClick();
+              initGame();
+              setRound((prev) => prev + 1);
+            }}
+            className="w-full py-3.5 rounded-xl bg-brand-primary hover:bg-brand-primaryDark text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors active:scale-95"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Keyingi to&apos;plam
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2.5">
+          {cards.map((card) => {
+            const isSelected = selected.includes(card.id);
+            const isMatched = matched.includes(card.id);
+            const isWrong = wrongPair.includes(card.id);
 
-          let style = "bg-dark-card border-dark-border text-white hover:bg-dark-hover";
-          if (isSelected) {
-            style = "bg-brand-accent/20 border-brand-accent text-brand-accent shadow-glow";
-          } else if (isMatched) {
-            style = "bg-brand-emerald/20 border-brand-emerald text-brand-emerald opacity-60 pointer-events-none scale-95";
-          }
+            let style = 'bg-dark-card border-dark-border hover:bg-dark-hover';
+            if (isWrong) style = 'bg-brand-rose/20 border-brand-rose animate-shake';
+            else if (isSelected) style = 'bg-brand-accent/20 border-brand-accent';
+            else if (isMatched)
+              style = 'bg-brand-emerald/15 border-brand-emerald/50 opacity-60 pointer-events-none';
 
-          return (
-            <button
-              key={card.id}
-              onClick={() => handleCardClick(card)}
-              className={`min-h-[72px] sm:min-h-[85px] p-2.5 sm:p-3 rounded-2xl border font-sans font-black text-sm sm:text-base whitespace-pre-line flex items-center justify-center text-center transition-all duration-200 active:scale-95 ${style}`}
-            >
-              {card.text}
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={card.id}
+                onClick={() => handleCardClick(card)}
+                aria-pressed={isSelected}
+                className={`min-h-[84px] p-3 rounded-2xl border flex flex-col items-center justify-center text-center gap-1 transition-colors active:scale-95 ${style}`}
+              >
+                {card.type === 'v1' ? (
+                  <span className="font-heading font-bold text-xl sm:text-2xl text-white break-words">
+                    {card.v1}
+                  </span>
+                ) : (
+                  <>
+                    <span className="font-heading font-bold text-base sm:text-lg leading-tight break-words">
+                      <span className="text-form-v2">{card.v2}</span>
+                      <span className="text-dark-muted mx-1">·</span>
+                      <span className="text-form-v3">{card.v3}</span>
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-400 leading-tight break-words">
+                      {card.uz}
+                    </span>
+                  </>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

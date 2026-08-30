@@ -1,30 +1,41 @@
 {
-  "name": "Irregular Verbs - 5-Step Learning App",
-  "short_name": "Irregular Verbs",
-  "description": "Master English irregular verbs easily with interactive flashcards, matching, typing, and speed tests.",
+  "id": "/",
+  "name": "Noto'g'ri fe'llar — 5 bosqichli mashq",
+  "short_name": "Noto'g'ri fe'llar",
+  "description": "116 ta ingliz tili noto'g'ri fe'lini kartochka, juftlash, yozish, tezlik va test rejimlarida o'zbekcha tarjimasi bilan yodlang.",
+  "lang": "uz",
+  "dir": "ltr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0b0f19",
   "theme_color": "#0b0f19",
+  "categories": ["education", "productivity"],
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X, Award, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface TestResultData {
   percent: number;
   correct: number;
   total: number;
-  date?: string;
 }
 
 interface TestResultModalProps {
@@ -17,58 +16,83 @@ interface TestResultModalProps {
 }
 
 export const TestResultModal: React.FC<TestResultModalProps> = ({ isOpen, onClose, result }) => {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  // Escape closes it and focus lands inside — neither worked before.
+  useEffect(() => {
+    if (!isOpen) return;
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !result) return null;
 
-  let gradeText = "Excellent Result! 🚀";
-  let gradeColor = "text-brand-emerald border-brand-emerald/30 bg-brand-emerald/10";
+  let gradeText = 'A’lo natija';
+  let gradeColor = 'text-brand-emerald border-brand-emerald/30 bg-brand-emerald/10';
   if (result.percent < 50) {
-    gradeText = "Keep Practicing! 💡";
-    gradeColor = "text-brand-rose border-brand-rose/30 bg-brand-rose/10";
+    gradeText = 'Yana mashq qilish kerak';
+    gradeColor = 'text-brand-rose border-brand-rose/30 bg-brand-rose/10';
   } else if (result.percent < 80) {
-    gradeText = "Good Effort! 👍";
-    gradeColor = "text-brand-amber border-brand-amber/30 bg-brand-amber/10";
+    gradeText = 'Yaxshi, lekin yaxshilash mumkin';
+    gradeColor = 'text-brand-amber border-brand-amber/30 bg-brand-amber/10';
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fadeIn">
-      <div className="bg-dark-card border border-dark-border rounded-3xl w-full max-w-md p-6 flex flex-col items-center justify-center gap-5 shadow-2xl relative text-center">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="test-result-title"
+        onClick={(e) => e.stopPropagation()}
+        className="bg-dark-card border border-dark-border rounded-3xl w-full max-w-md p-6 flex flex-col items-center gap-5 shadow-2xl relative text-center animate-popIn"
+      >
         <button
+          ref={closeRef}
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-dark-muted hover:text-white transition-all"
+          aria-label="Yopish"
+          className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-dark-muted hover:text-white transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-primary to-brand-accent flex items-center justify-center shadow-glow mt-2">
-          <Award className="w-8 h-8 text-white" />
+          <Award className="w-7 h-7 text-white" />
         </div>
 
         <div>
-          <span className="text-xs font-bold text-dark-muted uppercase tracking-wider block mb-1">
-            Latest Final Test Performance
+          <span
+            id="test-result-title"
+            className="text-[11px] font-semibold text-dark-muted uppercase tracking-wider block mb-1"
+          >
+            So&apos;nggi test natijasi
           </span>
-          <h2 className="font-heading font-extrabold text-5xl text-white tracking-tight">
+          <p className="font-heading font-bold text-5xl text-white tracking-tight tabular-nums">
             {result.percent}%
-          </h2>
+          </p>
         </div>
 
-        <div className={`px-4 py-1.5 rounded-full border text-xs font-extrabold ${gradeColor}`}>
+        <div className={`px-4 py-1.5 rounded-full border text-xs font-bold ${gradeColor}`}>
           {gradeText}
         </div>
 
         <div className="w-full bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center justify-around">
           <div className="flex flex-col items-center">
-            <span className="text-xs text-dark-muted font-bold">Correct</span>
-            <span className="text-lg font-extrabold text-brand-emerald flex items-center gap-1 mt-0.5">
+            <span className="text-[11px] text-dark-muted font-semibold">To&apos;g&apos;ri</span>
+            <span className="text-lg font-bold text-brand-emerald flex items-center gap-1 mt-0.5 tabular-nums">
               <CheckCircle2 className="w-4 h-4" /> {result.correct}
             </span>
           </div>
-
           <div className="w-px h-8 bg-white/10" />
-
           <div className="flex flex-col items-center">
-            <span className="text-xs text-dark-muted font-bold">Incorrect</span>
-            <span className="text-lg font-extrabold text-brand-rose flex items-center gap-1 mt-0.5">
+            <span className="text-[11px] text-dark-muted font-semibold">Xato</span>
+            <span className="text-lg font-bold text-brand-rose flex items-center gap-1 mt-0.5 tabular-nums">
               <AlertCircle className="w-4 h-4" /> {result.total - result.correct}
             </span>
           </div>
@@ -76,9 +100,9 @@ export const TestResultModal: React.FC<TestResultModalProps> = ({ isOpen, onClos
 
         <button
           onClick={onClose}
-          className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs transition-all mt-1"
+          className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm transition-colors min-h-[44px]"
         >
-          Close
+          Yopish
         </button>
       </div>
     </div>

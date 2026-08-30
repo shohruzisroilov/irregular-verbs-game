@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
@@ -32,12 +32,54 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html,
+body {
+  /* 100vh on mobile is the height *without* the browser toolbars, so the page
+     was always taller than the screen. dvh tracks the real visible area. */
+  min-height: 100dvh;
+  /* Stops a downward swipe inside a game from triggering pull-to-refresh. */
+  overscroll-behavior-y: contain;
+}
+
 body {
   background-color: #0B0F19;
   color: #F8FAFC;
-  min-height: 100vh;
   overflow-x: hidden;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  /* Long-pressing a card during the matching game used to select its text and
+     pop up the iOS callout menu. */
+  -webkit-touch-callout: none;
+}
+
+button,
+[role='button'],
+nav,
+kbd {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Below the `roomy` breakpoint the app shell owns the viewport: the header,
+   the step bar and the bottom nav must never scroll away. Without this the
+   document itself could still scroll a little behind the shell. */
+@media (max-width: 639.98px), (max-height: 639.98px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+/* Keyboard users need to see where they are. Pointer clicks stay ring-free. */
+:focus-visible {
+  outline: 2px solid #7DD3FC;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* The bottom nav is fixed, so a focused control could sit underneath it. */
+html {
+  scroll-padding-bottom: 6rem;
 }
 
 ::-webkit-scrollbar {
@@ -53,4 +95,15 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

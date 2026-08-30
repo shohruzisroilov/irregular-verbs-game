@@ -1,21 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Volume2, VolumeX, Zap, BookOpen, Target } from 'lucide-react';
+import { Volume2, VolumeX, Zap, BookOpen, ArrowLeft, Target } from 'lucide-react';
 import { sound } from '@/utils/sound';
 
 interface HeaderProps {
-  onOpenDictionary?: () => void;
-  latestTestScore?: number | null;
-  onOpenTestResult?: () => void;
+  isDictionaryOpen: boolean;
+  onToggleDictionary: () => void;
+  latestTestScore: number | null;
+  onOpenTestResult: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  onOpenDictionary,
+  isDictionaryOpen,
+  onToggleDictionary,
   latestTestScore,
   onOpenTestResult,
 }) => {
-  const [soundOn, setSoundOn] = useState(sound.isEnabled());
+  const [soundOn, setSoundOn] = useState(true);
+
+  // Read the stored preference after mount so the server and client markup match.
+  React.useEffect(() => {
+    setSoundOn(sound.isEnabled());
+  }, []);
 
   const handleSoundToggle = () => {
     const newState = sound.toggleSound();
@@ -24,60 +31,65 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="flex items-center justify-between bg-dark-card/90 backdrop-blur-md border border-dark-border px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl shadow-card gap-2">
-      <div className="flex items-center gap-2 sm:gap-2.5">
-        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-brand-primary to-brand-accent flex items-center justify-center shadow-glow shrink-0">
-          <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+    <header className="shrink-0 flex items-center justify-between bg-dark-card/90 backdrop-blur-md border border-dark-border px-3 py-2.5 short:py-1.5 rounded-2xl shadow-card gap-2">
+      <div className="flex items-center gap-2.5 min-w-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-primary to-brand-accent flex items-center justify-center shadow-glow shrink-0">
+          <Zap className="w-[18px] h-[18px] text-white" />
         </div>
-        <div>
-          <h1 className="font-heading font-extrabold text-sm sm:text-base text-white tracking-tight leading-none">
-            Irregular Verbs
+        <div className="min-w-0">
+          <h1 className="font-heading font-bold text-sm text-white tracking-tight leading-tight truncate">
+            Noto&apos;g&apos;ri fe&apos;llar
           </h1>
-          <p className="text-[10px] sm:text-[11px] text-dark-muted font-medium mt-0.5">
-            5-Step Learning App
+          <p className="text-[11px] text-dark-muted font-medium leading-tight short:hidden">
+            5 bosqichli mashq
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        {/* Latest Test Result Badge */}
-        {latestTestScore !== undefined && latestTestScore !== null && (
+      <div className="flex items-center gap-1.5 shrink-0">
+        {latestTestScore !== null && (
           <button
             onClick={() => {
               sound.playClick();
-              if (onOpenTestResult) onOpenTestResult();
+              onOpenTestResult();
             }}
-            className="flex items-center gap-1.5 bg-brand-emerald/15 border border-brand-emerald/40 hover:bg-brand-emerald/25 px-2.5 py-1.5 rounded-xl transition-all active:scale-95"
-            title="Latest test score"
+            className="flex items-center gap-1.5 bg-brand-emerald/15 border border-brand-emerald/40 hover:bg-brand-emerald/25 px-2.5 h-11 rounded-xl transition-colors active:scale-95"
+            aria-label={`So'nggi test natijasi ${latestTestScore} foiz. Batafsil ko'rish`}
           >
             <Target className="w-4 h-4 text-brand-emerald" />
-            <span className="text-xs font-extrabold text-brand-emerald">
+            <span className="text-xs font-bold text-brand-emerald tabular-nums">
               {latestTestScore}%
             </span>
           </button>
         )}
 
-        {/* Dictionary Table Page Button */}
-        {onOpenDictionary && (
-          <button
-            onClick={() => {
-              sound.playClick();
-              onOpenDictionary();
-            }}
-            className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 border border-dark-border px-3 py-2 rounded-xl text-white transition-all active:scale-95"
-            title="Full verbs table"
-          >
+        {/* Doubles as the way back: the dictionary is not a step, so there is no
+            other predictable exit from it. */}
+        <button
+          onClick={() => {
+            sound.playClick();
+            onToggleDictionary();
+          }}
+          aria-pressed={isDictionaryOpen}
+          className={`flex items-center gap-1.5 px-3 h-11 rounded-xl border transition-colors active:scale-95 ${
+            isDictionaryOpen
+              ? 'bg-brand-primary text-white border-brand-primary'
+              : 'bg-white/5 hover:bg-white/10 border-dark-border text-white'
+          }`}
+        >
+          {isDictionaryOpen ? (
+            <ArrowLeft className="w-4 h-4" />
+          ) : (
             <BookOpen className="w-4 h-4 text-brand-accent" />
-            <span className="text-xs font-bold hidden sm:inline">Table</span>
-          </button>
-        )}
+          )}
+          <span className="text-xs font-bold">{isDictionaryOpen ? 'Ortga' : 'Jadval'}</span>
+        </button>
 
-        {/* Audio Mute/Unmute Button */}
         <button
           onClick={handleSoundToggle}
-          className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-dark-border flex items-center justify-center text-dark-text transition-all active:scale-95 shrink-0"
-          title="Toggle sound"
-          aria-label="Sound toggle"
+          className="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/10 border border-dark-border flex items-center justify-center transition-colors active:scale-95 shrink-0"
+          aria-pressed={soundOn}
+          aria-label={soundOn ? "Ovozni o'chirish" : 'Ovozni yoqish'}
         >
           {soundOn ? (
             <Volume2 className="w-4 h-4 text-brand-accent" />
